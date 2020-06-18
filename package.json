@@ -9,6 +9,7 @@
   "author": "btc_desire",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^12.2.0"
+    "discord.js": "^12.2.0",
+    "sqlite3": "^4.2.0"
   }
 }
