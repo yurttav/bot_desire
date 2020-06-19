@@ -116,7 +116,9 @@ bot.on('channelCreate', channel => {
 
 bot.on('presenceUpdate', (oldPresence, newPresence) => {
   
-  if (oldPresence === null) return;
+  if (oldPresence.status=== null) return;
+
+  console.log(oldPresence);
 
   let id = newPresence.userID;
   let g_id = newPresence.guild.id;
