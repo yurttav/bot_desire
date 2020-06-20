@@ -115,8 +115,11 @@ bot.on('channelCreate', channel => {
 });
 
 bot.on('presenceUpdate', (oldPresence, newPresence) => {
-  console.log(oldPresence);
-  if (oldPresence.status=== null) return;
+  //console.log(oldPresence);
+  if (typeof oldPresence.status === 'undefined') {
+    console.log(`Tanımsız Presence`);
+    return;
+  }
 
   let id = newPresence.userID;
   let g_id = newPresence.guild.id;
