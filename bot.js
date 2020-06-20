@@ -116,7 +116,7 @@ bot.on('channelCreate', channel => {
 
 bot.on('presenceUpdate', (oldPresence, newPresence) => {
   //console.log(oldPresence);
-  if (typeof oldPresence.status === 'undefined') {
+  if (typeof oldPresence === 'undefined') {
     console.log(`Tanımsız Presence`);
     return;
   }
