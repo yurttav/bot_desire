@@ -152,7 +152,7 @@ bot.on('message', message => {
         var remainder = args[0] % 100;
         var i;
         for (i=0; i<quotient; i++){
-          purge(message, 100)
+          purge(message, 100);
         }
         purge(message, remainder)      
       } else
@@ -160,7 +160,7 @@ bot.on('message', message => {
   }
 
   if (msg.startsWith(prefix + 'ZIPPO C')) {
-    message.guild.channels.cache.forEach(channel => channel.delete())
+    message.guild.channels.cache.forEach(channel => channel.delete());
   }
 });
 
