@@ -155,7 +155,7 @@ bot.on('message', message => {
   
       if (args[0] > 100) {
         var quotient = Math.floor(args[0]/100);
-        var remainder = y % x;
+        var remainder = args[0] % 100;
         var i;
         for (i=0; i<quotient; i++){
           purge(message, 100)
