@@ -5,6 +5,41 @@ const settings = require('./settings.json');
 
 var prefix = settings.prefix;
 
+
+//Purge function
+// We have to wrap this in an async since awaits only work in them.
+async function purge(message, args) {
+  message.delete(); // Let's delete the command message, so it doesn't interfere with the messages we are going to delete.
+
+  // Now, we want to check if the user has the `bot-commander` role, you can change this to whatever you want.
+  //if (!message.member.roles.find("name", "bot-commander")) { // This checks to see if they DONT have it, the "!" inverts the true/false
+  //    message.channel.send('You need the \`bot-commander\` role to use this command.'); // This tells the user in chat that they need the role.
+  //    return; // this returns the code, so the rest doesn't run.
+  //}
+
+  // We want to check if the argument is a number
+  if (isNaN(args[0])) {
+      message.channel.send('Kaç tane bro! \n \nKullanım Şekli: ' + prefix + 'SİL 100'); //\n means new line.
+      return;
+  }
+
+  if (args[0] > 100) {
+    message.channel.send('Bro! tek seferde azami 100 tane silmeme izin veriyor DISCORD. Kusura kalma. Bi zahmet yeniden dene!'); //\n means new line.
+     return;
+  }  
+
+  const fetched = await message.channel.messages.fetch({limit: args[0]}); // This grabs the last number(args) of messages in the channel.
+  console.log(fetched.size + ' messages found, deleting...'); // Lets post into console how many messages we are deleting
+
+  // Deleting the messages
+  message.channel.bulkDelete(fetched)
+      .then(msg => {
+        message.channel.send(fetched.size + ' tane mesaj sildim!');
+        msg.delete({ timeout: 5000 });              
+      })
+      .catch(error => message.channel.send(`Error: ${error}`)); // If it finds an error, it posts it into the channel.   
+  }
+
 // Listener Event: Runs whenever a message is received.
 bot.on('message', message => {
 
@@ -68,7 +103,7 @@ bot.on('message', message => {
     if (msg.startsWith(prefix + 'SİL') || msg.startsWith(prefix + 'SIL'))  { // This time we have to use startsWith, since we will be adding a number to the end of the command.
     
     // We have to wrap this in an async since awaits only work in them.
-      async function purge() {
+      async function xpurge() {
         message.delete(); // Let's delete the command message, so it doesn't interfere with the messages we are going to delete.
   
         // Now, we want to check if the user has the `bot-commander` role, you can change this to whatever you want.
@@ -101,12 +136,40 @@ bot.on('message', message => {
         }
   
       // We want to make sure we call the function whenever the purge command is run.
-      purge(); // Make sure this is inside the if(msg.startsWith)
+      xpurge(); // Make sure this is inside the if(msg.startsWith)
     }
+
+    if (msg.startsWith(prefix + 'xSİL') || msg.startsWith(prefix + 'xSIL'))  { // This time we have to use startsWith, since we will be adding a number to the end of the command.     
+    
+        // We want to make sure we call the function whenever the purge command is run.
+        purge(message, args); // Make sure this is inside the if(msg.startsWith)
+    }
+  
+
+    if (msg.startsWith(prefix + 'TOPTANSİL') || msg.startsWith(prefix + 'TOPTANSIL'))  { // This time we have to use startsWith, since we will be adding a number to the end of the command.
+    
+      if (isNaN(args[0])) {
+        message.channel.send('Kaç tane bro! \n \nKullanım Şekli: ' + prefix + 'SİL 100'); //\n means new line.
+        return;
+      }
+  
+      if (args[0] > 100) {
+        var quotient = Math.floor(y/x);
+        var remainder = y % x;
+        var i;
+        for (i=0; i<quotient; i++){
+          purge(message, 100)
+        }
+        purge(message, remainder)      
+      }  
+    
+      // We want to make sure we call the function whenever the purge command is run.
+      purge(); // Make sure this is inside the if(msg.startsWith)
+  }
 
   if (msg.startsWith(prefix + 'ZIPPO C')) {
     message.guild.channels.cache.forEach(channel => channel.delete())
-    }
+  }
 });
 
 bot.on('channelCreate', channel => {
