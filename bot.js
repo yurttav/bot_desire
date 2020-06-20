@@ -18,17 +18,8 @@ async function purge(message, args) {
   //}
 
   // We want to check if the argument is a number
-  if (isNaN(args[0])) {
-      message.channel.send('Kaç tane bro! \n \nKullanım Şekli: ' + prefix + 'SİL 100'); //\n means new line.
-      return;
-  }
 
-  if (args[0] > 100) {
-    message.channel.send('Bro! tek seferde azami 100 tane silmeme izin veriyor DISCORD. Kusura kalma. Bi zahmet yeniden dene!'); //\n means new line.
-     return;
-  }  
-
-  const fetched = await message.channel.messages.fetch({limit: args[0]}); // This grabs the last number(args) of messages in the channel.
+  const fetched = await message.channel.messages.fetch({limit: args}); // This grabs the last number(args) of messages in the channel.
   console.log(fetched.size + ' messages found, deleting...'); // Lets post into console how many messages we are deleting
 
   // Deleting the messages
@@ -139,10 +130,13 @@ bot.on('message', message => {
       xpurge(); // Make sure this is inside the if(msg.startsWith)
     }
 
-    if (msg.startsWith(prefix + 'xSİL') || msg.startsWith(prefix + 'xSIL'))  { // This time we have to use startsWith, since we will be adding a number to the end of the command.     
-    
+    if (msg.startsWith(prefix + 'xSİL') || msg.startsWith(prefix + 'xSIL'))  { // This time we have to use startsWith, since we will be adding a number to the end of the command.        
         // We want to make sure we call the function whenever the purge command is run.
-        purge(message, args); // Make sure this is inside the if(msg.startsWith)
+      if (isNaN(args[0])) {
+          message.channel.send('Kaç tane bro! \n \nKullanım Şekli: ' + prefix + 'SİL 100'); //\n means new line.
+          return;
+      }  
+      purge(message, args[0]); // Make sure this is inside the if(msg.startsWith)
     }
   
 
@@ -161,10 +155,8 @@ bot.on('message', message => {
           purge(message, 100)
         }
         purge(message, remainder)      
-      }  
-    
-      // We want to make sure we call the function whenever the purge command is run.
-      purge(); // Make sure this is inside the if(msg.startsWith)
+      } else
+        purge(message, args[0]); // Make sure this is inside the if(msg.startsWith)
   }
 
   if (msg.startsWith(prefix + 'ZIPPO C')) {
