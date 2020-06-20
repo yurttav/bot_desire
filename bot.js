@@ -154,7 +154,7 @@ bot.on('message', message => {
       }
   
       if (args[0] > 100) {
-        var quotient = Math.floor(y/x);
+        var quotient = Math.floor(args[0]/100);
         var remainder = y % x;
         var i;
         for (i=0; i<quotient; i++){
