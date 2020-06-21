@@ -32,41 +32,6 @@ async function purge(message, args) {
       .catch(error => message.channel.send(`Error: ${error}`)); // If it finds an error, it posts it into the channel.   
   }
 
-// Get Data From Db
-/*
-function getUserData(db, id, n){
-  let sql = `SELECT * FROM users WHERE UserID = ?`;
-  db.get(sql, [id], (err, userdata) => {
-    if (err) {
-      console.error(err.message + " get user data");
-      return "none";
-    } else if (typeof userdata === 'undefined') {
-      console.log(`ROW Tanımsız`);
-      console.log(`Kayıtsız Kullanıcı`);
-      db.run(`INSERT INTO users VALUES(?,?)`, [id,n], function(err) {
-        if (err) {
-          return console.log(err.message + " insertte hata var");
-        }
-        // get the last insert id
-        console.log(`A row has been inserted with rowid ${this.UserID}`);
-      });
-      return "none";
-    } else {
-      console.log(`Database in get e cevabı = ${userdata}`);
-      var dbUserID = userdata.UserID;
-      var dbLastSalute = userdata.LastSalute;
-      return userdata[0]
-      ? console.log(userdata.UserID, userdata.LastSalute, " başarılı bir şekilde db den aldık", dbUserID, dbLastSalute)
-      : console.log(`No one found with the id ${id}`);
-    }
-  });
-
-
-
-
-}
-*/
-
 // Listener Event: Runs whenever a message is received.
 bot.on('message', message => {
 
@@ -213,14 +178,22 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
 
   if (typeof oldPresence === 'undefined') {
     console.log(`Tanımsız Presence`);
-    console.log(status)
-    //return;
+    console.log(status);
+    var oldstatus = 'offline';
+  } else {
+    var oldstatus = oldPresence.status;
   }
 
-  //let oldstatus = oldPresence.status;
+  /*
+  console.log(`Guild = ${g_id}\t ${newPresence.guild.name}\t\tKanalları`);
+
+  newPresence.guild.channels.cache.forEach((channel) => {
+    console.log(`Kanal = ${channel.id}\t ${channel.name} channel`);
+  });
+  */
 
   //hangi guild bu
-  if (g_id !== settings.home_office) return;
+  //if (g_id !== settings.home_office) return;
 
   let gunluk = bot.channels.cache.get(settings.gunluk);
 
@@ -260,6 +233,7 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
       var isSaluted = false;
       if (status !== 'offline') {
         var lastsalute = new Date(Date.parse(row.LastSalute));
+        //timepast = Math.abs(Math.floor((datenow.getTime() - lastsalute.getTime()) / 1000));
         timepast = Math.abs(Math.floor((datenow.getTime() - lastsalute.getTime()) / 1000 / 60 / 60));
 
         //console.log(`Son görülme zaman farkı = ${timepast}         zaman = ${datenow}                 lastsalute = ${row.LastSalute}          beforeparse = ${lastsalute}`);
@@ -268,7 +242,7 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
         //console.log("daha taze selam verdik")
                 
         //if (!(status === 'offline') & (g_id === settings.home_office)) {
-        if ((g_id === settings.home_office) & (timepast > 5)) {  
+        if ((g_id === settings.home_office) & (timepast > 4) & (oldstatus === 'offline')) {  
           switch (id) {
             case settings.desire: 
             case settings.efe: 
@@ -278,14 +252,15 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
             case settings.soykan: 
             case settings.cikko: gunluk.send('SA <@'+id+'> Bro! Hoş geldin :)'); isSaluted = true; break;     
           }
+          console.log(`Selamladım ${id}\nson online zamanı = ${lastsalute}\t\t ${row.LastSalute}\nGeçen Süre = ${timepast}`);
         }
-        /*
-        if (!(status === 'offline') & (g_id === settings.devops)) {
+        
+        if (!(status === 'offline') & (timepast > 4) & (g_id === settings.devops)) {
           switch (id) {
             case settings.rojeryo: bot.channels.cache.get('722044772750983241').send('SA <@'+id+'> Bro! Hoş geldin :)'); isSaluted = true; break;          
           }
         }
-        */
+        
       } else isSaluted = true;
 
       if (isSaluted) {
