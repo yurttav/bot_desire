@@ -211,6 +211,14 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
   let g_id = newPresence.guild.id;
   let status = newPresence.status;
 
+  if (typeof oldPresence === 'undefined') {
+    console.log(`Tanımsız Presence`);
+    console.log(status)
+    //return;
+  }
+
+  //let oldstatus = oldPresence.status;
+
   //hangi guild bu
   if (g_id !== settings.home_office) return;
 
@@ -255,10 +263,12 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
         timepast = Math.abs(Math.floor((datenow.getTime() - lastsalute.getTime()) / 1000 / 60 / 60));
 
         //console.log(`Son görülme zaman farkı = ${timepast}         zaman = ${datenow}                 lastsalute = ${row.LastSalute}          beforeparse = ${lastsalute}`);
-        if (timepast < 5) return; //console.log("daha taze selam verdik")
+        
+
+        //console.log("daha taze selam verdik")
                 
         //if (!(status === 'offline') & (g_id === settings.home_office)) {
-        if (g_id === settings.home_office) {  
+        if ((g_id === settings.home_office) & (timepast > 5)) {  
           switch (id) {
             case settings.desire: 
             case settings.efe: 
@@ -277,6 +287,7 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
         }
         */
       } else isSaluted = true;
+
       if (isSaluted) {
         console.log("Selamladım############");
         let sql = `UPDATE users
