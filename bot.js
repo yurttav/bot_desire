@@ -49,17 +49,19 @@ bot.on('message', message => {
     switch (msg) {
       case 'SA': message.reply('AS bro!'); break;
       case 'SAE': if (isgunlukkanal) {message.channel.send('Dikkat et QR lı değilse blind olabilir!');} break;
-      case 'NTA': 
+      case 'NTA': if (isgunlukkanal) {message.channel.send('Tüh be. Bitti mi <@'+sender+'>? Nasip işte!');} break;
+      /*
         if (isgunlukkanal) {
           if (sender === settings.soykan){
             message.channel.send('Hadi <@'+sender+'> Derviş göster kendini iste de gelsin!');
           } else {
-            message.channel.send('Tüh be. Bitti mi <@'+sender+'> Bro!. İste de gelsin diyeceğim ama <@'+settings.soykan+'> Dervişe has bir durum! Ama yine de iste sen');
+            message.channel.send('Tüh be. Bitti mi <@'+sender+'> Nasip işte! İste de gelsin diyeceğim ama <@'+settings.soykan+'> Dervişe has bir durum! Ama yine de iste sen');
           }
         } 
         break;
-      case 'ACF': if (isgunlukkanal) {message.channel.send('Kral geldi Kral ama sadece @frk a Kral! @Btc Desire @Crop @Cikko siz de kırıntıları toplayın. @Soykan sen de şu testi bitir artık sana da gelsin :)');} break;
-      case 'ALPACA': if (isgunlukkanal) {message.channel.send('Hadi yine iyisiniz. @frk @Btc Desire size yok boşuna beklemeyin...!');} break;
+      */  
+      case 'ACF': if (isgunlukkanal) {message.channel.send('Kral geldi Kral!!! :)');} break;
+      case 'ALPACA': if (isgunlukkanal) {message.channel.send(`Hadi yine iyisiniz. <@${settings.frk}> <@${settings.desire}> size yok boşuna beklemeyin...!`);} break;
       case 'DAYILAR': message.channel.send('Dayım benim! Nasılsın?'); break;
       case prefix + 'ADAM': message.channel.send(settings.sahip); break;
       case prefix + 'DOWN': return; 
@@ -209,7 +211,7 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
   db.run(`CREATE TABLE IF NOT EXISTS users (UserID NUMERIC UNIQUE, LastSalute	TEXT)`);
 
   var datenow = new Date();
-  var strdatenow = datenow.toLocaleString();
+  var strdatenow = datenow.toLocaleString('tr-TR');
 
   //id ye göre tablodan çek --- bilgiler userdata da
   
