@@ -200,7 +200,7 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
     if ((channel.name === "genel")  || (channel.name === "gunluk")) salutechid = channel.id;
   });
   //silinecek sonra
-  salutechid = settings.gunluk;
+  //salutechid = settings.gunluk;
 
   if (salutechid == 0) {
     console.log("Salute Kanalı Tanımlı Değil...");
@@ -266,8 +266,8 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
       if (status !== 'offline') {
         
         var lastsalute = new Date(Date.parse(row.LastSalute));
-        //timepast = Math.abs(Math.floor((datenow.getTime() - lastsalute.getTime()) / 1000 / 60 / 60));
-        timepast = Math.abs(Math.floor((datenow.getTime() - lastsalute.getTime()) / 1000));
+        timepast = Math.abs(Math.floor((datenow.getTime() - lastsalute.getTime()) / 1000 / 60 / 60));
+        //timepast = Math.abs(Math.floor((datenow.getTime() - lastsalute.getTime()) / 1000));
         console.log(`Yeni Statüsü= ${status}\t"Eski Statü= ${oldstatus}\n${id}\t${username}\tson online zamanı = ${lastsalute}\t\t ${row.LastSalute}\nGeçen Süre = ${timepast}`);
 
         //if (!(status === 'offline') & (g_id === settings.home_office)) {
