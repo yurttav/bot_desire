@@ -172,15 +172,22 @@ bot.on('channelCreate', channel => {
   if (channel.type === 'text') return channel.send('Ooo yeni kanal hayırlı olsun Patron!');
 });
 
-bot.on('presenceUpdate', (oldPresence, newPresence) => {
+//Presence Olayları
+bot.on('presenceUpdate', (oldPresence, newPresence) => { 
 
   let id = newPresence.userID;
   let g_id = newPresence.guild.id;
   let status = newPresence.status;
+  let username = newPresence.user.username;
+
+  if (newPresence.user.bot) {
+    console.log(`Bot statüsü değişti: ${username} \t\t${status}`);
+    return;
+  }
 
   if (typeof oldPresence === 'undefined') {
     console.log(`Tanımsız Presence`);
-    console.log(status);
+    console.log(username, status);
     var oldstatus = 'offline';
   } else {
     var oldstatus = oldPresence.status;
@@ -202,9 +209,12 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
   //db bağlan
   let db = new sqlite3.Database('./users.db', (err) => {
     if (err) {
-      console.error(err.message + " new sqlite3");
+      console.error(err.message + " DB açılamadı sorun var...");
+      //hata kodunu öğren
+      //db.run(`CREATE TABLE IF NOT EXISTS users (UserID NUMERIC UNIQUE, UserName TEXT, LastSalute	TEXT)`);
+      //console.log("DB yok. Yeni DB oluşturuldu")
     }
-    console.log('Connected to the users database.');
+    console.log('DB bulundu ve bağlantı sağlandı');
   });
 
   //db oluştur yoksa
@@ -218,31 +228,26 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
   let sql = `SELECT * FROM users WHERE UserID = ?`;
   
   db.get(sql, [id], (err, row) => {
-    if (err) return console.error(err.message + " get user data");
+    if (err) return console.error(err.message + " user bilgisi db den alınırken hata oluştu");
     else if (!row) {
       console.log(`Kayıtsız Kullanıcı`);
-      db.run(`INSERT INTO users VALUES(?,?,?)`, [id, newPresence.user.username, strdatenow], function(err) {
+      db.run(`INSERT INTO users VALUES(?,?,?)`, [id, username, strdatenow], function(err) {
         if (err) {
-          console.log(err.message + " insertte hata var");
+          console.log(err.message + " insert sırasında hata oluştu");
         }
         // get the last insert id
         console.log(`A row has been inserted with rowid ${this.lastID}`);
         });
     } else {
-      //bu kişi db de var
-      //console.log(`Database in get e cevabı = ${row}`);
+      //bu kişi db de varsa
       console.log(row.UserID, row.UserName, row.LastSalute, " başarılı bir şekilde db den aldık")
       var isSaluted = false;
       if (status !== 'offline') {
-        var lastsalute = new Date(Date.parse(row.LastSalute));
-        //timepast = Math.abs(Math.floor((datenow.getTime() - lastsalute.getTime()) / 1000));
-        timepast = Math.abs(Math.floor((datenow.getTime() - lastsalute.getTime()) / 1000 / 60 / 60));
-
-        //console.log(`Son görülme zaman farkı = ${timepast}         zaman = ${datenow}                 lastsalute = ${row.LastSalute}          beforeparse = ${lastsalute}`);
         
+        var lastsalute = new Date(Date.parse(row.LastSalute));
+        timepast = Math.abs(Math.floor((datenow.getTime() - lastsalute.getTime()) / 1000 / 60 / 60));
+        console.log(`Yeni Statüsü = ${status}\t"Eski Statü = ${oldstatus}\n${id}\t${username}\tson online zamanı = ${lastsalute}\t\t ${row.LastSalute}\nGeçen Süre = ${timepast}`);
 
-        //console.log("daha taze selam verdik")
-                
         //if (!(status === 'offline') & (g_id === settings.home_office)) {
         if ((g_id === settings.home_office) & (timepast > 4) & (oldstatus === 'offline')) {  
           switch (id) {
@@ -252,9 +257,8 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
             case settings.frk: 
             case settings.just: 
             case settings.soykan: 
-            case settings.cikko: gunluk.send('SA <@'+id+'> Bro! Hoş geldin :)'); isSaluted = true; break;     
+            case settings.cikko: gunluk.send('SA <@'+id+'> Bro! Hoş geldin :)'); isSaluted = true; break;  
           }
-          console.log(`Selamladım ${id}\nson online zamanı = ${lastsalute}\t\t ${row.LastSalute}\nGeçen Süre = ${timepast}`);
         }
         
         if (!(status === 'offline') & (timepast > 4) & (g_id === settings.devops)) {
@@ -266,15 +270,15 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
       } else isSaluted = true;
 
       if (isSaluted) {
-        console.log("Selamladım############");
+        console.log(`Selamlama oldu ya da kullanıcı offline olup zaman güncellemesi yapıldı\nYeni Statüsü = ${status}\t"Eski Statü = ${oldstatus}\n${id}\t${username}\tson online zamanı = ${lastsalute}\t\t ${row.LastSalute}\nGeçen Süre = ${timepast}`);
         let sql = `UPDATE users
           SET LastSalute = ?
           WHERE UserID = ?`;
         db.run(sql, [strdatenow, id], function(err) {
           if (err) {
-            return console.error(err.message);
+            return console.error(err.message," update sırasında hata oluştu.");
           }
-          console.log(`Row(s) updated: ${this.changes}`);
+          console.log(`Row(s) updated: ${this.changes} zaman güncellemesi başarılı`);
         });
       } 
     }
