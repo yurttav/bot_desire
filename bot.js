@@ -226,6 +226,7 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
   //id ye göre tablodan çek --- bilgiler userdata da
   
   let sql = `SELECT * FROM users WHERE UserID = ?`;
+  let timepast = 0;
   
   db.get(sql, [id], (err, row) => {
     if (err) return console.error(err.message + " user bilgisi db den alınırken hata oluştu");
@@ -246,7 +247,7 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
         
         var lastsalute = new Date(Date.parse(row.LastSalute));
         timepast = Math.abs(Math.floor((datenow.getTime() - lastsalute.getTime()) / 1000 / 60 / 60));
-        console.log(`Yeni Statüsü = ${status}\t"Eski Statü = ${oldstatus}\n${id}\t${username}\tson online zamanı = ${lastsalute}\t\t ${row.LastSalute}\nGeçen Süre = ${timepast}`);
+        console.log(`Yeni Statüsü= ${status}\t"Eski Statü= ${oldstatus}\n${id}\t${username}\tson online zamanı = ${lastsalute}\t\t ${row.LastSalute}\nGeçen Süre = ${timepast}`);
 
         //if (!(status === 'offline') & (g_id === settings.home_office)) {
         if ((g_id === settings.home_office) & (timepast > 4) & (oldstatus === 'offline')) {  
