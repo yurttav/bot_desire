@@ -70,7 +70,7 @@ bot.on('message', message => {
       case prefix + '?': message.channel.send(settings.help); break;
     }
 
-    if ((msg === 'INŞ') || (msg === 'INS') || msg.includes(' INŞ ') || msg.includes(' INS ') || msg.includes('INŞ ') || msg.includes('INS ')) {
+    if ((msg === 'INŞ') || (msg === 'INS') || msg.includes(' INŞ ') || msg.includes(' INS ') || msg.includes('INŞ ') || msg.includes('INS ') || msg.includes('INSALLAH') || msg.includes('INSAALLAH') || msg.includes('INŞALLAH') || msg.includes('INŞALLAH')) {
       message.channel.send('Amin!');
     } else if (msg.includes('AEO') || msg.includes('GÖRÜŞÜRÜZ')) {
       message.channel.send('A.E.O. kardeşim!');
@@ -183,16 +183,35 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
   if (newPresence.user.bot) {
     console.log(`Bot statüsü değişti: ${username} \t\t${status}`);
     return;
-  }
+  } 
 
   if (typeof oldPresence === 'undefined') {
     console.log(`Tanımsız Presence`);
     console.log(username, status);
+    //console.log(newPresence.user.client.guilds);
     var oldstatus = 'offline';
   } else {
     var oldstatus = oldPresence.status;
   }
 
+  let salutechid = 0;
+  newPresence.guild.channels.cache.forEach((channel) => {
+    //console.log(`Kanal = ${channel.id}\t ${channel.name} channel`);
+    if ((channel.name === "genel")  || (channel.name === "gunluk")) salutechid = channel.id;
+  });
+  //silinecek sonra
+  salutechid = settings.gunluk;
+
+  if (salutechid == 0) {
+    console.log("Salute Kanalı Tanımlı Değil...");
+    return;
+  }
+  /*
+  switch (g_id) {
+    case settings.home_office: salutech = settings.gunluk; break;
+    case '722044772750983238': salutech = '722044772750983241'; break;
+  }
+  */
   /*
   console.log(`Guild = ${g_id}\t ${newPresence.guild.name}\t\tKanalları`);
 
@@ -204,7 +223,8 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
   //hangi guild bu
   //if (g_id !== settings.home_office) return;
 
-  let gunluk = bot.channels.cache.get(settings.gunluk);
+  //let gunluk = bot.channels.cache.get(settings.gunluk);
+  let salutech = bot.channels.cache.get(salutechid);
 
   //db bağlan
   let db = new sqlite3.Database('./users.db', (err) => {
@@ -246,10 +266,12 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
       if (status !== 'offline') {
         
         var lastsalute = new Date(Date.parse(row.LastSalute));
-        timepast = Math.abs(Math.floor((datenow.getTime() - lastsalute.getTime()) / 1000 / 60 / 60));
+        //timepast = Math.abs(Math.floor((datenow.getTime() - lastsalute.getTime()) / 1000 / 60 / 60));
+        timepast = Math.abs(Math.floor((datenow.getTime() - lastsalute.getTime()) / 1000));
         console.log(`Yeni Statüsü= ${status}\t"Eski Statü= ${oldstatus}\n${id}\t${username}\tson online zamanı = ${lastsalute}\t\t ${row.LastSalute}\nGeçen Süre = ${timepast}`);
 
         //if (!(status === 'offline') & (g_id === settings.home_office)) {
+        /*
         if ((g_id === settings.home_office) & (timepast > 4) & (oldstatus === 'offline')) {  
           switch (id) {
             case settings.desire: 
@@ -265,6 +287,24 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
         if (!(status === 'offline') & (timepast > 4) & (g_id === settings.devops)) {
           switch (id) {
             case settings.rojeryo: bot.channels.cache.get('722044772750983241').send('SA <@'+id+'> Bro! Hoş geldin :)'); isSaluted = true; break;          
+          }
+        }
+        */
+
+        if ((timepast > 4) & (oldstatus === 'offline')) {
+          if (g_id === settings.home_office){  
+            switch (id) {
+              case settings.desire: 
+              case settings.efe: 
+              case settings.crop: 
+              case settings.frk: 
+              case settings.just: 
+              case settings.soykan: 
+              case settings.cikko: salutech.send('SA <@'+id+'> Bro! Hoş geldin :)'); isSaluted = true; break;  
+            }
+          } else {
+            salutech.send('SA <@'+id+'> Bro! Hoş geldin :)'); 
+            isSaluted = true;
           }
         }
         
