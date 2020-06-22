@@ -208,7 +208,7 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
   });
 
   //db oluştur yoksa
-  db.run(`CREATE TABLE IF NOT EXISTS users (UserID NUMERIC UNIQUE, LastSalute	TEXT)`);
+  db.run(`CREATE TABLE IF NOT EXISTS users (UserID NUMERIC UNIQUE, UserName TEXT, LastSalute	TEXT)`);
 
   var datenow = new Date();
   var strdatenow = datenow.toLocaleString('tr-TR');
@@ -221,7 +221,7 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
     if (err) return console.error(err.message + " get user data");
     else if (!row) {
       console.log(`Kayıtsız Kullanıcı`);
-      db.run(`INSERT INTO users VALUES(?,?)`, [id,strdatenow], function(err) {
+      db.run(`INSERT INTO users VALUES(?,?,?)`, [id, newPresence.user.username, strdatenow], function(err) {
         if (err) {
           console.log(err.message + " insertte hata var");
         }
@@ -231,7 +231,7 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
     } else {
       //bu kişi db de var
       //console.log(`Database in get e cevabı = ${row}`);
-      console.log(row.UserID, row.LastSalute, " başarılı bir şekilde db den aldık")
+      console.log(row.UserID, row.UserName, row.LastSalute, " başarılı bir şekilde db den aldık")
       var isSaluted = false;
       if (status !== 'offline') {
         var lastsalute = new Date(Date.parse(row.LastSalute));
