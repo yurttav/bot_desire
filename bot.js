@@ -53,7 +53,9 @@ bot.on('message', message => {
     }
     // Commands
     switch (msg) {
-      case 'SA': message.reply('AS bro!'); break;
+      case 'SA': 
+      case 'S.A':
+      case 'S.A.': message.reply('AS bro!'); break;
       case 'SAE': if (isgunlukkanal) {message.channel.send('Dikkat et QR lı değilse blind olabilir!');} break;
       case 'NTA': if (isgunlukkanal) {message.channel.send('Tüh be. Bitti mi <@'+sender+'>? Nasip işte!');} break;
       /*
@@ -69,7 +71,7 @@ bot.on('message', message => {
       case 'ACF': if (isgunlukkanal) {message.channel.send('Kral geldi Kral!!! :)');} break;
       case 'ALPACA': if (isgunlukkanal) {message.channel.send(`Hadi yine iyisiniz. <@${settings.frk}> <@${settings.desire}> size yok boşuna beklemeyin...!`);} break;
       case 'DAYILAR': message.channel.send('Dayım benim! Nasılsın?'); break;
-      case prefix + 'ADAM': message.channel.send(settings.sahip); break;
+      case prefix + 'ADAM': message.channel.send(`<@${settings.sahip}>`); break;
       case prefix + 'DOWN': return; 
     // Ping
       case prefix + 'PING': message.channel.send('Ping!'); break;// This 'sends' the message to the channel the message was in. You can change what is in the message to whatever you want.
@@ -209,12 +211,28 @@ bot.on('message', message => {
       });
     }
 
-    if (msg.startsWith(prefix + 'DENEME')) {
-
+    if (msg.startsWith(prefix + 'AYARLAR')) {
+      /*
       message.guild.channels.cache.forEach(channel => {
         if ((channel.type !== "category") & (channel.parentID !== '645025507041083406'))         
           console.log(channel.id, channel.name, channel.type, channel.parentID, bot.channels.cache.get(channel.parentID).name);       
       });
+      */
+     if (args[0] === 'undefined') {
+       console.log(`settings deneme = ${settings.deneme}`);
+       return;
+     }
+     /*
+     if (isNaN(args[0])) {
+      message.channel.send('Kaç tane bro! \n \nKullanım Şekli: ' + prefix + 'SİL 100'); //\n means new line.
+      console.log(`settings deneme = ${settings.deneme}`);
+      return;
+      }
+      */
+      let key = args[0];
+      console.log(`Önce : ${settings[key]}`);
+      settings[key] = args[1];
+      console.log(`Sonra : ${settings[key]}`);
     }
 
     if (msg.startsWith(prefix + 'KANALLAR')) {    
@@ -256,7 +274,7 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
   let salutechid = 0;
   newPresence.guild.channels.cache.forEach((channel) => {
     //console.log(`Kanal = ${channel.id}\t ${channel.name} channel`);
-    if ((channel.name === "genel")  || (channel.name === "gunluk")) salutechid = channel.id;
+    if ((channel.name === "genel")  || (channel.name === "günlük") || (channel.name === "gunluk")) salutechid = channel.id;
   });
   //silinecek sonra
   //salutechid = settings.gunluk;
