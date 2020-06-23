@@ -8,7 +8,7 @@ var prefix = settings.prefix;
 
 
 //Purge function
-// We have to wrap this in an async since awaits only work in them.
+
 async function purge(message, args) {
   message.delete(); // Let's delete the command message, so it doesn't interfere with the messages we are going to delete.
 
@@ -22,15 +22,21 @@ async function purge(message, args) {
 
   const fetched = await message.channel.messages.fetch({limit: args}); // This grabs the last number(args) of messages in the channel.
   console.log(fetched.size + ' messages found, deleting...'); // Lets post into console how many messages we are deleting
-
+  let msgcount = fetched.size;
   // Deleting the messages
   message.channel.bulkDelete(fetched)
+  /*
       .then(msg => {
-        message.channel.send(fetched.size + ' tane mesaj sildim!');
-        msg.delete({ timeout: 5000 });              
+        //message.channel.send(fetched.size + ' tane mesaj sildim!');
+        //msg.delete({ timeout: 5000 });
+        //console.log(msg);
+        console.log("silme başarılı");              
       })
+      */
       .catch(error => message.channel.send(`Error: ${error}`)); // If it finds an error, it posts it into the channel.   
-  }
+  console.log("Purge içinde msgcount: ",msgcount);
+  return msgcount;
+}
 
 // Listener Event: Runs whenever a message is received.
 bot.on('message', message => {
@@ -123,8 +129,9 @@ bot.on('message', message => {
         // Deleting the messages
         message.channel.bulkDelete(fetched)
             .then(msg => {
-              message.channel.send(fetched.size + ' tane mesaj sildim!');
-              msg.delete({ timeout: 5000 });              
+              message.channel.send(fetched.size + ' tane mesaj sildim!').then(d_msg => { d_msg.delete({ timeout: 5000 });});
+              //console.log(msg);
+              //msg.delete({ timeout: 5000 });              
             })
             .catch(error => message.channel.send(`Error: ${error}`)); // If it finds an error, it posts it into the channel.   
         }
@@ -133,13 +140,19 @@ bot.on('message', message => {
       xpurge(); // Make sure this is inside the if(msg.startsWith)
     }
 
-    if (msg.startsWith(prefix + 'xSİL') || msg.startsWith(prefix + 'xSIL'))  { // This time we have to use startsWith, since we will be adding a number to the end of the command.        
+    if (msg.startsWith(prefix + 'XSİL') || msg.startsWith(prefix + 'XSIL'))  { // This time we have to use startsWith, since we will be adding a number to the end of the command.        
         // We want to make sure we call the function whenever the purge command is run.
       if (isNaN(args[0])) {
-          message.channel.send('Kaç tane bro! \n \nKullanım Şekli: ' + prefix + 'SİL 100'); //\n means new line.
-          return;
-      }  
-      purge(message, args[0]); // Make sure this is inside the if(msg.startsWith)
+        message.channel.send('Kaç tane bro! \n \nKullanım Şekli: ' + prefix + 'SİL 100'); //\n means new line.
+        return;
+      } 
+
+      async function xsil() {     
+        let msgcount = await purge(message, args[0]); // Make sure this is inside the if(msg.startsWith)
+        console.log("Purge dışında msgcount: ",msgcount);
+        message.channel.send(msgcount + ' tane mesaj sildim!').then(d_msg => { d_msg.delete({ timeout: 5000 });});
+      }
+      xsil();
     }
   
 
@@ -149,22 +162,68 @@ bot.on('message', message => {
         message.channel.send('Kaç tane bro! \n \nKullanım Şekli: ' + prefix + 'SİL 100'); //\n means new line.
         return;
       }
-  
-      if (args[0] > 100) {
-        var quotient = Math.floor(args[0]/100);
-        var remainder = args[0] % 100;
-        var i;
-        for (i=0; i<quotient; i++){
-          purge(message, 100);
-        }
-        purge(message, remainder)      
-      } else
-        purge(message, args[0]); // Make sure this is inside the if(msg.startsWith)
-  }
 
-  if (msg.startsWith(prefix + 'ZIPPO C')) {
-    message.guild.channels.cache.forEach(channel => channel.delete());
-  }
+      async function toptansil() {
+
+        let msgcount = 0;
+  
+        if (args[0] > 100) {
+          var quotient = Math.floor(args[0]/100);
+          var remainder = args[0] % 100;
+          var i;
+          for (i=0; i<quotient; i++){
+            msgcount += await purge(message, 100)
+              .catch(error => message.channel.send(`Error: ${error}`)); // If it finds an error, it posts it into the channel.   ;
+          }
+          msgcount += await purge(message, remainder)
+            .catch(error => message.channel.send(`Error: ${error}`)); // If it finds an error, it posts it into the channel.      
+        } else
+          msgcount += await purge(message, args[0]) 
+            .catch(error => message.channel.send(`Error: ${error}`)); // If it finds an error, it posts it into the channel.   
+  
+        console.log("Purge dışında msgcount: ",msgcount);
+        message.channel.send(msgcount + ' tane mesaj sildim!').then(d_msg => { d_msg.delete({ timeout: 5000 });});       
+      }
+      toptansil();
+    }
+
+    if (msg.startsWith(prefix + 'SPAM')) {
+
+      if (isNaN(args[0])) {
+        message.channel.send('Kaç tane bro! \n \nKullanım Şekli: ' + prefix + 'SPAM 100'); 
+        return;
+      }
+
+      var i;
+      for (i=0; i<args[0]; i++){
+        message.channel.send(i+1); 
+      }
+    }
+
+    if (msg.startsWith(prefix + 'ZIPPO C')) {
+
+      message.guild.channels.cache.forEach(channel => {
+        if ((channel.type !== "category") & (channel.parentID !== '645025507041083406'))
+          console.log(channel.id, channel.name, channel.type, channel.parentID, bot.channels.cache.get(channel.parentID).name);       
+          channel.delete();
+      });
+    }
+
+    if (msg.startsWith(prefix + 'DENEME')) {
+
+      message.guild.channels.cache.forEach(channel => {
+        if ((channel.type !== "category") & (channel.parentID !== '645025507041083406'))         
+          console.log(channel.id, channel.name, channel.type, channel.parentID, bot.channels.cache.get(channel.parentID).name);       
+      });
+    }
+
+    if (msg.startsWith(prefix + 'KANALLAR')) {    
+      message.guild.channels.cache.forEach(channel => {
+        if (channel.type !== "category")
+          console.log(channel.id, channel.name, channel.type, channel.parentID, bot.channels.cache.get(channel.parentID).name);
+      });
+    }
+
 });
 
 bot.on('channelCreate', channel => {
@@ -261,7 +320,7 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
         });
     } else {
       //bu kişi db de varsa
-      console.log(row.UserID, row.UserName, row.LastSalute, " başarılı bir şekilde db den aldık")
+      console.log(row.UserID, row.UserName, row.LastSalute, " başarılı bir şekilde db den aldık");
       var isSaluted = false;
       if (status !== 'offline') {
         
