@@ -6,19 +6,10 @@ const sqlite3 = require('sqlite3').verbose();
 
 var prefix = settings.prefix;
 
-
 //Purge function
 
 async function purge(message, args) {
-  message.delete(); // Let's delete the command message, so it doesn't interfere with the messages we are going to delete.
-
-  // Now, we want to check if the user has the `bot-commander` role, you can change this to whatever you want.
-  //if (!message.member.roles.find("name", "bot-commander")) { // This checks to see if they DONT have it, the "!" inverts the true/false
-  //    message.channel.send('You need the \`bot-commander\` role to use this command.'); // This tells the user in chat that they need the role.
-  //    return; // this returns the code, so the rest doesn't run.
-  //}
-
-  // We want to check if the argument is a number
+  //message.delete(); // Let's delete the command message, so it doesn't interfere with the messages we are going to delete. 
 
   const fetched = await message.channel.messages.fetch({limit: args}); // This grabs the last number(args) of messages in the channel.
   console.log(fetched.size + ' messages found, deleting...'); // Lets post into console how many messages we are deleting
@@ -38,6 +29,7 @@ async function purge(message, args) {
   return msgcount;
 }
 
+
 // Listener Event: Runs whenever a message is received.
 bot.on('message', message => {
 
@@ -55,9 +47,9 @@ bot.on('message', message => {
     switch (msg) {
       case 'SA': 
       case 'S.A':
-      case 'S.A.': message.reply('AS bro!'); break;
-      case 'SAE': if (isgunlukkanal) {message.channel.send('Dikkat et QR lı değilse blind olabilir!');} break;
-      case 'NTA': if (isgunlukkanal) {message.channel.send('Tüh be. Bitti mi <@'+sender+'>? Nasip işte!');} break;
+      case 'S.A.': message.reply('AS bro!').then(d_msg => { d_msg.delete({ timeout: 10000 });}); break;
+      case 'SAE': if (isgunlukkanal) {message.channel.send('Dikkat et QR lı değilse blind olabilir!').then(d_msg => { d_msg.delete({ timeout: 10000 });});} break;
+      case 'NTA': if (isgunlukkanal) {message.channel.send('Tüh be. Bitti mi <@'+sender+'>? Nasip işte!').then(d_msg => { d_msg.delete({ timeout: 10000 });});} break;
       /*
         if (isgunlukkanal) {
           if (sender === settings.soykan){
@@ -68,10 +60,10 @@ bot.on('message', message => {
         } 
         break;
       */  
-      case 'ACF': if (isgunlukkanal) {message.channel.send('Kral geldi Kral!!! :)');} break;
-      case 'ALPACA': if (isgunlukkanal) {message.channel.send(`Hadi yine iyisiniz. <@${settings.frk}> <@${settings.desire}> size yok boşuna beklemeyin...!`);} break;
-      case 'DAYILAR': message.channel.send('Dayım benim! Nasılsın?'); break;
-      case prefix + 'ADAM': message.channel.send(`<@${settings.sahip}>`); break;
+      case 'ACF': if (isgunlukkanal) {message.channel.send('Kral geldi Kral!!! :)').then(d_msg => { d_msg.delete({ timeout: 10000 });});} break;
+      case 'ALPACA': if (isgunlukkanal) {message.channel.send(`Hadi yine iyisiniz. <@${settings.frk}> <@${settings.desire}> size yok boşuna beklemeyin...!`).then(d_msg => { d_msg.delete({ timeout: 10000 });});} break;
+      case 'DAYILAR': message.channel.send('Dayım benim! Nasılsın?').then(d_msg => { d_msg.delete({ timeout: 10000 });}); break;
+      case prefix + 'ADAM': message.channel.send(`<@${settings.sahip}>`).then(d_msg => { d_msg.delete({ timeout: 10000 });}); break;
       case prefix + 'DOWN': return; 
     // Ping
       case prefix + 'PING': message.channel.send('Ping!'); break;// This 'sends' the message to the channel the message was in. You can change what is in the message to whatever you want.
@@ -79,9 +71,9 @@ bot.on('message', message => {
     }
 
     if ((msg === 'INŞ') || (msg === 'INS') || msg.includes(' INŞ ') || msg.includes(' INS ') || msg.includes('INŞ ') || msg.includes('INS ') || msg.includes('INSALLAH') || msg.includes('INSAALLAH') || msg.includes('INŞALLAH') || msg.includes('INŞALLAH')) {
-      message.channel.send('Amin!');
+      message.channel.send('Amin!').then(d_msg => { d_msg.delete({ timeout: 10000 });});
     } else if (msg.includes('AEO') || msg.includes('GÖRÜŞÜRÜZ')) {
-      message.channel.send('A.E.O. kardeşim!');
+      message.channel.send('A.E.O. kardeşim!').then(d_msg => { d_msg.delete({ timeout: 10000 });});
     }
 
     if (msg.startsWith(prefix + 'SENDMSG'))  {
@@ -177,8 +169,10 @@ bot.on('message', message => {
             msgcount += await purge(message, 100)
               .catch(error => message.channel.send(`Error: ${error}`)); // If it finds an error, it posts it into the channel.   ;
           }
+          if (remainder !== 0) {
           msgcount += await purge(message, remainder)
-            .catch(error => message.channel.send(`Error: ${error}`)); // If it finds an error, it posts it into the channel.      
+            .catch(error => message.channel.send(`Error: ${error}`)); // If it finds an error, it posts it into the channel.  
+          }      
         } else
           msgcount += await purge(message, args[0]) 
             .catch(error => message.channel.send(`Error: ${error}`)); // If it finds an error, it posts it into the channel.   
@@ -246,7 +240,7 @@ bot.on('message', message => {
 
 bot.on('channelCreate', channel => {
   console.log(`${channel.name} isimli ${channel.type} kanalı ${channel.id} id numarası ile ${channel.createdAt}'te oluşturuldu.`);
-  if (channel.type === 'text') return channel.send('Ooo yeni kanal hayırlı olsun Patron!');
+  if (channel.type === 'text') return channel.send('Ooo yeni kanal hayırlı olsun Patron!').then(d_msg => { d_msg.delete({ timeout: 10000 });});
 });
 
 //Presence Olayları
@@ -380,7 +374,7 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
               case settings.cikko: salutech.send('SA <@'+id+'> Bro! Hoş geldin :)'); isSaluted = true; break;  
             }
           } else {
-            salutech.send('SA <@'+id+'> Bro! Hoş geldin :)'); 
+            salutech.send('SA <@'+id+'> Bro! Hoş geldin :)').then(d_msg => { d_msg.delete({ timeout: 10000 });}); 
             isSaluted = true;
           }
         }
