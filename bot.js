@@ -252,7 +252,7 @@ bot.on('message', message => {
             let deletedmsgcount = msgs.size;
             msgs.forEach(async m => {
               temp = bot.channels.cache.get(message.channel.id).messages.cache.get(m.id);
-              console.log(temp.content);
+              //console.log(temp.content);
               temp.delete();
             });
             console.log(deletedmsgcount, " messages were deleted");
