@@ -240,7 +240,31 @@ bot.on('message', message => {
       message.delete();   
       
       if (isNaN(args[0])) {
-        message.channel.send('Kaç tane bro! \n \nKullanım Şekli: ' + prefix + 'NSİL 100'); //\n means new line.
+        message.channel.send('Kaç tane bro! \n \nKullanım Şekli: ' + prefix + 'NSİL 100'); 
+        return;
+      }
+
+      if (args[0] > 100) {
+        message.channel.send('Bro! tek seferde azami 100 tane silmeme izin veriyor DISCORD. Kusura kalma. Bi zahmet yeniden dene!'); 
+         return;
+      }  
+
+      message.channel.messages.fetch({ limit: args[0] })
+        .then( msgs => {
+          //console.log("Toplam Mesaj Sayısı = ", msgs.size)
+          let deletedmsgcount = msgs.size;
+          msgs.forEach( m => {
+            bot.channels.cache.get(message.channel.id).messages.cache.get(m.id).delete();
+          });
+          console.log(deletedmsgcount, " messages were deleted");
+      });
+    }
+
+    if (msg.startsWith(prefix + 'NTOPTANSİL') || msg.startsWith(prefix + 'NTOPTANSIL'))  { // This time we have to use startsWith, since we will be adding a number to the end of the command.
+      message.delete();   
+      
+      if (isNaN(args[0])) {
+        message.channel.send('Kaç tane bro! \n \nKullanım Şekli: ' + prefix + 'NTOPTANSİL 100'); //\n means new line.
         return;
       }
 
