@@ -1,7 +1,7 @@
 {
     "prefix": "//",
     "sahip": "386654984290172929",
-    "help": "Bot_Desire için Komutlar\n-------------------------\n\n100 tane mesaj sil =\t\t\t\t//sil 100",
+    "help": "Bot_Desire için Komutlar\n-------------------------\n\n100 tane mesaj sil =\t\t\t\t//sil 100\n500 tane mesaj sil =\t\t\t\t//toptansil 500\nDiscord apileri 15 günden önceki mesajları silmeye izin vermez. Api kullanmadan geçmiş mesajları silme. Yavaş çalışır.\t\t\t\t//nsil 100\nKanallar\t\t\t\t//kanallar\n\n\nHerşeyi sil. Bu komutun geri dönüşü yoktur. Bütün Kanalları siler. Yazarken çok defa düşün.....\t\t\t//ZIPPO C",
     "cikko": "602592749815857158",
     "frk": "509103404048449536",
     "crop": "660553300185186320",
