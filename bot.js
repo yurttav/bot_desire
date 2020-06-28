@@ -237,17 +237,19 @@ bot.on('message', message => {
     } 
 
     if (msg.startsWith(prefix + 'NSİL') || msg.startsWith(prefix + 'NSIL'))  { // This time we have to use startsWith, since we will be adding a number to the end of the command.
-      message.delete();   
+      //message.delete();   
       
       if (isNaN(args[0])) {
         message.channel.send('Kaç tane bro! \n \nKullanım Şekli: ' + prefix + 'NSİL 100'); 
         return;
       }
 
+      args[0] += 1;
+
       if (args[0] > 100) {
-        message.channel.send('Bro! tek seferde azami 100 tane silmeme izin veriyor DISCORD. Kusura kalma. Bi zahmet yeniden dene!'); 
-         return;
-      }  
+        //message.channel.send('Bro! tek seferde azami 100 tane silmeme izin veriyor DISCORD. Kusura kalma. Bi zahmet yeniden dene!'); 
+        args[0] = 100;
+      }    
 
       message.channel.messages.fetch({ limit: args[0] })
         .then( msgs => {
