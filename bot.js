@@ -145,6 +145,9 @@ bot.on('message', message => {
           var quotient = Math.floor(args[0]/100);
           var remainder = args[0] % 100;
           var i;
+          //if (quotient>0){
+            //purge(message, 100)
+          //}
           for (i=0; i<quotient; i++){
             msgcount += await purge(message, 100)
               .catch(error => message.channel.send(`ToptanSil fonksiyonunda purge 100 komutunda Hata: ${error}`)); // If it finds an error, it posts it into the channel.   ;
@@ -154,11 +157,14 @@ bot.on('message', message => {
             .catch(error => message.channel.send(`ToptanSil fonksiyonunda purge kalan komutunda Hata: ${error}`)); // If it finds an error, it posts it into the channel.  
           }      
         } else
-          msgcount += await purge(message, args[0]) 
+          msgcount += await purge(message, args[0])
             .catch(error => message.channel.send(`ToptanSil fonksiyonunda purge args[0] komutunda Hata: ${error}`)); // If it finds an error, it posts it into the channel.   
   
         //console.log("Purge dışında msgcount: ",msgcount);
-        message.channel.send(msgcount + ' tane mesaj sildim!').then(d_msg => { d_msg.delete({ timeout: 5000 });});       
+        function deletedmsg(){
+          message.channel.send(msgcount + ' tane mesaj sildim!').then(d_msg => { d_msg.delete({ timeout: 15000 });});       
+        }
+        setTimeout(deletedmsg,10000);
       }
       toptansil();
     }
@@ -356,6 +362,16 @@ bot.on('message', message => {
       deltoptansil();
     }
    */
+  if (msg.startsWith(prefix + 'DSM'))  { 
+    if (isNaN(args[0])) {
+      message.channel.send('Hatalı Kullanım bro! \n \nKullanım Şekli: ' + prefix + 'DSM 123488237492379'); 
+      return;
+    }
+    
+    temp = bot.channels.cache.get(message.channel.id).messages.cache.get(args[0]);
+              //console.log(temp.content);
+    temp.delete();
+  }     
 });
 
 bot.on('channelCreate', channel => {
