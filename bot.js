@@ -145,15 +145,15 @@ bot.on('message', message => {
           var quotient = Math.floor(args[0]/100);
           var remainder = args[0] % 100;
           var i;
-          //if (quotient>0){
-            //purge(message, 100)
-          //}
-          for (i=0; i<quotient; i++){
-            msgcount += await purge(message, 100)
+          msgcount += await purge(message, 100)
+          .catch(error => message.channel.send(`ToptanSil fonksiyonunda purge 100 komutunda Hata: ${error}`));
+          
+          for (i=1; i<quotient; i++){
+            msgcount += await setTimeout(purge(message, 100),15000)
               .catch(error => message.channel.send(`ToptanSil fonksiyonunda purge 100 komutunda Hata: ${error}`)); // If it finds an error, it posts it into the channel.   ;
           }
           if (remainder !== 0) {
-          msgcount += await purge(message, remainder)
+          msgcount += await setTimeout(purge(message, remainder),15000)
             .catch(error => message.channel.send(`ToptanSil fonksiyonunda purge kalan komutunda Hata: ${error}`)); // If it finds an error, it posts it into the channel.  
           }      
         } else
@@ -164,7 +164,7 @@ bot.on('message', message => {
         function deletedmsg(){
           message.channel.send(msgcount + ' tane mesaj sildim!').then(d_msg => { d_msg.delete({ timeout: 15000 });});       
         }
-        setTimeout(deletedmsg,10000);
+        setTimeout(deletedmsg,10000*quotient);
       }
       toptansil();
     }
@@ -464,6 +464,7 @@ bot.on('presenceUpdate', (oldPresence, newPresence) => {
               case settings.frk: 
               case settings.just: 
               case settings.soykan: 
+              case settings.rdm: 
               case settings.cikko: salutech.send('SA <@'+id+'> Bro! Hoş geldin :)'); isSaluted = true; break;  
             }
           } else {
